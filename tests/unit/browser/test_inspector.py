@@ -70,6 +70,11 @@ def test_set_position(position, splitter_count, window_visible,
             fake_inspector.isVisible()) == window_visible
 
 
+def test_window_title(fake_inspector):
+    fake_inspector.set_position(inspector.Position.window)
+    assert fake_inspector.windowTitle() == 'Web Inspector'
+
+
 def test_toggle_window(fake_inspector):
     fake_inspector.set_position(inspector.Position.window)
     for visible in [True, False, True]:
