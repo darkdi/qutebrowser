@@ -130,3 +130,22 @@ def test_reload(bm_file, fake_save_manager, qtbot):
     assert list(bm.marks.items()) == [
         ('http://example.org', 'Example Site'),
     ]
+
+
+def test_quickmark_overwrite_shows_existing_url(config_tmpdir,
+                                                   fake_save_manager, mocker):
+    quickmarks_file = config_tmpdir / 'quickmarks'
+    quickmarks_file.write('example https://old.example/?a=1&b=2\n')
+    manager = urlmarks.QuickmarkManager()
+    confirm = mocker.patch(
+        'qutebrowser.browser.urlmarks.message.confirm_async')
+
+    manager.quickmark_add('https://new.example/', 'example')
+
+    confirm.assert_called_once_with(
+        title='Override existing quickmark?',
+        text='Current URL:<br/><b>https://old.example/?a=1&amp;b=2</b>',
+        yes_action=unittest.mock.ANY,
+        default=True,
+        url='https://new.example/',
+    )
