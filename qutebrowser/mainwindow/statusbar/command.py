@@ -150,6 +150,32 @@ class Command(misc.CommandLineEdit):
 
     @cmdutils.register(instance='status-command',
                        modes=[usertypes.KeyMode.command], scope='window')
+    @cmdutils.argument('action', choices=[
+        'clear', 'select-all', 'copy', 'cut', 'paste', 'undo', 'redo',
+    ])
+    def cmd_action(self, action: str) -> None:
+        """Run a standard editing action on the command line.
+
+        This exposes native QLineEdit editing operations as qutebrowser
+        commands, so keys such as XF86_Paste can be bound without emulating
+        another key press.
+
+        Args:
+            action: The editing action to execute.
+        """
+        actions = {
+            'clear': self.clear,
+            'select-all': self.selectAll,
+            'copy': self.copy,
+            'cut': self.cut,
+            'paste': self.paste,
+            'undo': self.undo,
+            'redo': self.redo,
+        }
+        actions[action]()
+
+    @cmdutils.register(instance='status-command',
+                       modes=[usertypes.KeyMode.command], scope='window')
     def command_history_prev(self) -> None:
         """Go back in the commandline history."""
         try:
